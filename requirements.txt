@@ -7,3 +7,8 @@ deepgram-sdk==2.12.0
 python-dotenv
 sounddevice
 wavio
+streamlit
+groq
+gtts
+pyaudio
+python-dotenv
