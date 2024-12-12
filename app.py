@@ -1,7 +1,6 @@
 import streamlit as st
-import sounddevice as sd
-import numpy as np
-import wavio
+import pyaudio
+import wave
 import os
 from groq import Groq
 from gtts import gTTS
@@ -12,12 +11,35 @@ client = Groq(api_key=API_KEY)
 
 # Function to record audio
 def record_audio(duration=5, filename="recorded_audio.wav"):
+    chunk = 1024  # Record in chunks of 1024 samples
+    format = pyaudio.paInt16  # 16 bits per sample
+    channels = 2  # 2 channels for stereo
+    rate = 44100  # Sample rate
+    p = pyaudio.PyAudio()
+
+    # Start recording
+    stream = p.open(format=format, channels=channels, rate=rate, input=True, frames_per_buffer=chunk)
+    frames = []
+
     st.write("Recording...")
-    fs = 44100  # Sample rate
-    audio = sd.rec(int(duration * fs), samplerate=fs, channels=2, dtype='int16')
-    sd.wait()  # Wait until recording is finished
-    wavio.write(filename, audio, fs, sampwidth=2)  # Save as WAV file
-    st.write(f"Recording complete. Saved as {filename}.")
+    for i in range(0, int(rate / chunk * duration)):
+        data = stream.read(chunk)
+        frames.append(data)
+
+    st.write("Recording complete.")
+    
+    # Stop recording
+    stream.stop_stream()
+    stream.close()
+    p.terminate()
+
+    # Save the recorded data as a WAV file
+    with wave.open(filename, 'wb') as wf:
+        wf.setnchannels(channels)
+        wf.setsampwidth(p.get_sample_size(format))
+        wf.setframerate(rate)
+        wf.writeframes(b''.join(frames))
+
     return filename
 
 # Function to transcribe audio
