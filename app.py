@@ -5,7 +5,6 @@ import wavio
 import os
 from groq import Groq
 from gtts import gTTS
-from IPython.display import Audio
 
 # Initialize Groq client
 API_KEY = "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"
