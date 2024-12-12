@@ -1,0 +1,9 @@
+streamlit
+groq
+gtts
+ffmpeg-python
+pydub
+deepgram-sdk==2.12.0
+python-dotenv
+sounddevice
+wavio
