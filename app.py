@@ -1,5 +1,5 @@
 import streamlit as st
-import pyaudio
+# import pyaudio
 import wave
 import os
 from groq import Groq
