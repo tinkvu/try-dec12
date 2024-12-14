@@ -16,7 +16,7 @@ def transcribe_audio(file_path, model="whisper-large-v3"):
                 model=model,
                 response_format="verbose_json",
             )
-        return transcription.text
+        return transcription["text"]
     except Exception as e:
         raise RuntimeError(f"Transcription failed: {e}")
 
@@ -37,12 +37,9 @@ def translate_to_english(text):
             top_p=1,
         )
 
-        # Debug: Print the raw response to understand its structure
-        st.write("Groq API Response:", completion)
-
         # Check if the response contains choices
         if isinstance(completion, dict) and "choices" in completion:
-            translation = "".join(chunk["delta"]["content"] for chunk in completion["choices"])
+            translation = completion["choices"][0]["message"]["content"]
             return translation.strip()
         else:
             raise ValueError("Unexpected API response format: Missing 'choices' key.")
@@ -68,11 +65,11 @@ uploaded_file = st.file_uploader("Upload an audio file", type=["wav", "mp3", "m4
 
 if uploaded_file is not None:
     # Use a temporary file to save the uploaded audio
-    with tempfile.NamedTemporaryFile(delete=False, suffix=f".{uploaded_file.type.split('/')[-1]}") as temp_file:
+    with tempfile.NamedTemporaryFile(delete=False, suffix=f".{uploaded_file.name.split('.')[-1]}") as temp_file:
         temp_file.write(uploaded_file.getbuffer())
         file_path = temp_file.name
 
-    st.audio(file_path, format=f"audio/{uploaded_file.type}")
+    st.audio(file_path, format=f"audio/{uploaded_file.name.split('.')[-1]}")
 
     # Transcribe audio
     st.write("Transcribing audio...")
