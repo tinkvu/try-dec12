@@ -16,7 +16,10 @@ def transcribe_audio(file_path, model="whisper-large-v3"):
                 model=model,
                 response_format="verbose_json",
             )
-        return transcription["text"]
+        if isinstance(transcription, dict) and "text" in transcription:
+            return transcription["text"]
+        else:
+            raise ValueError("Unexpected API response format: Missing 'text' key.")
     except Exception as e:
         raise RuntimeError(f"Transcription failed: {e}")
 
@@ -39,8 +42,11 @@ def translate_to_english(text):
 
         # Check if the response contains choices
         if isinstance(completion, dict) and "choices" in completion:
-            translation = completion["choices"][0]["message"]["content"]
-            return translation.strip()
+            message = completion["choices"][0]["message"]
+            if "content" in message:
+                return message["content"].strip()
+            else:
+                raise ValueError("Unexpected API response format: Missing 'content' key.")
         else:
             raise ValueError("Unexpected API response format: Missing 'choices' key.")
 
