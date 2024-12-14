@@ -57,21 +57,24 @@ uploaded_file = st.file_uploader("Upload an audio file", type=["mp3", "wav", "m4
 if uploaded_file:
     st.success(f"Uploaded file: {uploaded_file.name}")
 
+    # Save the uploaded file to a temporary location
+    temp_file_path = f"temp_{uploaded_file.name}"
+    with open(temp_file_path, "wb") as temp_file:
+        temp_file.write(uploaded_file.read())
+
     # Convert to a supported format if needed (e.g., .wav)
     file_extension = os.path.splitext(uploaded_file.name)[1]
     if file_extension not in [".mp3", ".wav"]:
         st.write("Converting audio file to .wav format...")
-        sound = AudioSegment.from_file(uploaded_file)
-        audio_file = "converted_audio.wav"
-        sound.export(audio_file, format="wav")
+        sound = AudioSegment.from_file(temp_file_path)
+        temp_file_path = "converted_audio.wav"
+        sound.export(temp_file_path, format="wav")
         st.write("Conversion complete.")
-    else:
-        audio_file = uploaded_file.name
 
     # Step 2: Transcribe the audio
     st.write("Transcribing audio...")
     try:
-        transcription = transcribe_audio(audio_file)
+        transcription = transcribe_audio(temp_file_path)
 
         # Access transcription text and language attributes
         transcription_text = transcription.text
@@ -104,3 +107,8 @@ if uploaded_file:
 
     except Exception as e:
         st.error(f"An error occurred during transcription: {e}")
+
+    # Clean up temporary file
+    finally:
+        if os.path.exists(temp_file_path):
+            os.remove(temp_file_path)
