@@ -4,6 +4,7 @@ from gtts import gTTS
 from pydub import AudioSegment
 import streamlit as st
 from audiorecorder import audiorecorder
+from IPython.display import Audio
 
 # Initialize the Groq client
 API_KEY = "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"
@@ -36,12 +37,10 @@ def play_audio_with_gtts(text, output_file="output_audio.mp3"):
 def translate_to_english(text):
     completion = client.chat.completions.create(
         model="llama3-8b-8192",
-        messages=[
-            {
-                "role": "system",
-                "content": f"translate this to english: {text}\nOnly output the translation."
-            },
-        ],
+        messages=[{
+            "role": "system",
+            "content": f"translate this to english: {text}\nOnly output the translation."
+        }],
         temperature=1,
         max_tokens=1024,
         top_p=1,
@@ -62,6 +61,14 @@ st.title("Audio Transcription and Translation")
 # Option to record or upload audio
 st.subheader("Choose an option to provide audio:")
 option = st.radio("Select input method:", ("Upload Audio", "Record Audio"))
+
+# Text input for pronunciation
+pron = st.text_input("Enter the text to be pronounced:")
+
+if pron:
+    # Play the entered text as speech
+    audio_output = play_audio_with_gtts(pron)
+    st.audio(audio_output, format="audio/mp3", autoplay=True)
 
 if option == "Upload Audio":
     uploaded_file = st.file_uploader("Upload an audio file", type=["mp3", "wav", "m4a"])
