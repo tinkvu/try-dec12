@@ -6,3 +6,4 @@ groq
 gtts
 pydub
 deepgram-sdk
+streamlit-audiorecorder
