@@ -35,8 +35,9 @@ def translate_to_english(text):
             max_tokens=1024,
             top_p=1,
         )
-        translation = "".join(chunk.choices[0].delta.content for chunk in completion)
-        return translation.strip()
+        translation = ""
+        for chunk in completion:
+            translation += chunk.choices[0].delta.content or ""
     except Exception as e:
         raise RuntimeError(f"Translation failed: {e}")
 
