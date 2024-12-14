@@ -23,6 +23,7 @@ def transcribe_audio(file_path, model="whisper-large-v3"):
 # Function to translate text using Groq Chat Completion model
 def translate_to_english(text):
     try:
+        # Call Groq API
         completion = groq_client.chat.completions.create(
             model="llama3-8b-8192",
             messages=[
@@ -35,9 +36,17 @@ def translate_to_english(text):
             max_tokens=1024,
             top_p=1,
         )
-        translation = ""
-        for chunk in completion:
-            translation += chunk.choices[0].delta.content or ""
+
+        # Debug: Print the raw response to understand its structure
+        st.write("Groq API Response:", completion)
+
+        # Check if the response contains choices
+        if isinstance(completion, dict) and "choices" in completion:
+            translation = "".join(chunk["delta"]["content"] for chunk in completion["choices"])
+            return translation.strip()
+        else:
+            raise ValueError("Unexpected API response format: Missing 'choices' key.")
+
     except Exception as e:
         raise RuntimeError(f"Translation failed: {e}")
 
