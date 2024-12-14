@@ -4,6 +4,7 @@ numpy
 wavio
 groq
 gtts
-pydub
 deepgram-sdk
 streamlit-audiorecorder
+pydub==0.25.1
+audiorecorder==0.0.6
