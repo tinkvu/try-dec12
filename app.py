@@ -130,12 +130,17 @@ elif option == "Record Audio":
     audio_bytes = audiorecorder("Click to record", "Recording...")
 
     if audio_bytes:
+        # Save recorded audio to a file
+        recorded_audio_path = "recorded_audio.wav"
+        with open(recorded_audio_path, "wb") as recorded_audio_file:
+            recorded_audio_file.write(audio_bytes)
+
         st.audio(audio_bytes, format="audio/wav")
 
         # Step 2: Transcribe the audio
         st.write("Transcribing audio...")
         try:
-            transcription = transcribe_audio(audio_bytes)
+            transcription = transcribe_audio(recorded_audio_path)
 
             # Access transcription text and language attributes
             transcription_text = transcription.text
@@ -168,3 +173,8 @@ elif option == "Record Audio":
 
         except Exception as e:
             st.error(f"An error occurred during transcription: {e}")
+
+        # Clean up temporary file
+        finally:
+            if os.path.exists(recorded_audio_path):
+                os.remove(recorded_audio_path)
