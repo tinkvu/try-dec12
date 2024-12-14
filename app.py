@@ -9,7 +9,7 @@ groq_client = Groq(api_key=GROQ_API_KEY)
 
 # Initialize Deepgram client
 DEEPGRAM_API_KEY = "805291bd449136dca714e320d57d53476efdcc13"
-deepgram_client = Deepgram(DEEPGRAM_API_KEY)
+deepgram_client = Deepgram("DEEPGRAM_API_KEY")
 
 # Function to transcribe audio using Groq Whisper API
 def transcribe_audio(file_path, model="whisper-large-v3"):
