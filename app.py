@@ -54,12 +54,9 @@ def translate_to_english(text):
     return translation.strip()
 
 # Streamlit App
-st.title("Audio Transcription and Translation")
+st.title("Any Language to English")
 
-# Option to record or upload audio
-st.subheader("Choose an option to provide audio:")
-option = st.radio("Select input method:", ("Upload Audio", "Record Audio"))
-
+st.write("Check the word pronunciations here!")
 # Text input for pronunciation
 pron = st.text_input("Enter the text to be pronounced:")
 
@@ -67,6 +64,13 @@ if pron:
     # Play the entered text as speech
     audio_output = play_audio_with_gtts(pron)
     st.audio(audio_output, format="audio/mp3", autoplay=True)
+
+
+# Option to record or upload audio
+st.subheader("Choose an option to provide audio:")
+option = st.radio("Select input method:", ("Upload Audio", "Record Audio"))
+
+
 
 if option == "Upload Audio":
     uploaded_file = st.file_uploader("Upload an audio file", type=["mp3", "wav", "m4a"])
